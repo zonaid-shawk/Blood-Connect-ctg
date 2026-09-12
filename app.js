@@ -51,12 +51,19 @@ function validateEmail(email) {
 function sendMailToAddress(email, subject, body) {
   if (!email || !validateEmail(email)) return false;
 
-  const mailtoLink = document.createElement("a");
-  mailtoLink.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  mailtoLink.style.display = "none";
-  document.body.appendChild(mailtoLink);
-  mailtoLink.click();
-  mailtoLink.remove();
+  const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  try {
+    window.location.href = mailtoUrl;
+    return true;
+  } catch (error) {
+    const mailtoLink = document.createElement("a");
+    mailtoLink.href = mailtoUrl;
+    mailtoLink.style.display = "none";
+    document.body.appendChild(mailtoLink);
+    mailtoLink.click();
+    mailtoLink.remove();
+  }
 
   return true;
 }
@@ -72,10 +79,38 @@ function getDonorPrintPageUrl(donorId) {
   ).toString();
 }
 
-function sendDonorApprovalEmail(donor) {
+async function sendDonorApprovalEmail(donor) {
   if (!donor || !donor.email || !validateEmail(donor.email)) return false;
 
   const printUrl = getDonorPrintPageUrl(donor.id);
+  const payload = {
+    recipientEmail: donor.email,
+    donorName: donor.fullName,
+    donorId: donor.donorId || donor.id,
+    bloodGroup: donor.bloodGroup,
+    printLink: printUrl,
+  };
+
+  try {
+    const response = await fetch("/api/send-donor-approval", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success) return true;
+    }
+  } catch (error) {
+    console.warn(
+      "Approval email API unavailable, falling back to mailto.",
+      error,
+    );
+  }
+
   const subject = "Your donor registration has been approved";
   const body =
     `Hello ${donor.fullName},\n\n` +
@@ -87,6 +122,45 @@ function sendDonorApprovalEmail(donor) {
     "Thank you for being a lifesaving donor.";
 
   return sendMailToAddress(donor.email, subject, body);
+}
+
+async function sendBloodRequestConfirmationEmail(request) {
+  if (!request || !request.email || !validateEmail(request.email)) return false;
+
+  const payload = {
+    recipientEmail: request.email,
+    patientName: request.patientName,
+    requestId: request.requestId,
+    bloodGroup: request.bloodGroup,
+    hospital: request.hospital,
+    city: request.city,
+    urgency: request.urgency,
+  };
+
+  try {
+    const response = await fetch("/api/send-blood-request", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success) return true;
+    }
+  } catch (error) {
+    console.warn(
+      "Blood request email API unavailable, falling back to mailto.",
+      error,
+    );
+  }
+
+  const subject = "Blood request submitted successfully";
+  const body = `Hello,\n\nYour blood request has been submitted successfully.\n\nRequest ID: ${request.requestId}\nBlood Group: ${request.bloodGroup}\nHospital: ${request.hospital}\nCity: ${request.city}\n\nPlease keep this ID for follow-up.`;
+
+  return sendMailToAddress(request.email, subject, body);
 }
 
 function openSinglePrintWindow(title, content) {
@@ -421,11 +495,7 @@ function submitBloodRequest(event) {
   // Store the last submitted request id for the print page.
   localStorage.setItem("latestRequestId", request.requestId);
 
-  const requestConfirmationSent = sendMailToAddress(
-    request.email,
-    "Blood request submitted successfully",
-    `Hello,\n\nYour blood request has been submitted successfully.\n\nRequest ID: ${request.requestId}\nBlood Group: ${request.bloodGroup}\nHospital: ${request.hospital}\nCity: ${request.city}\n\nPlease keep this ID for follow-up.`,
-  );
+  const requestConfirmationSent = sendBloodRequestConfirmationEmail(request);
 
   // Show success and print popup.
   showMessage(
