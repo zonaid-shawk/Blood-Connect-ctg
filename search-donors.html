@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Donors - BloodConnect</title>
+    <link rel="icon" type="image/png" href="src/photos/fav icon.png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <img src="src/photos/logo.png" alt="BloodConnect Logo" />
+      </div>
+      <ul>
+        <li class="nav-home"><a href="index.html">Home</a></li>
+        <li class="nav-item"><a href="donor-register.html">Become Donor</a></li>
+        <li class="nav-item"><a href="request-blood.html">Request Blood</a></li>
+        <li class="nav-admin">
+          <a
+            href="admin/admin-login.html"
+            style="background: rgba(255, 255, 255, 0.2)"
+            >🔒 Admin</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <div class="search-section">
+        <h2>🔍 Find Blood Donors</h2>
+
+        <div class="search-filters">
+          <div class="filter-group">
+            <label>Blood Group</label>
+            <select id="searchBloodGroup" onchange="searchDonors()">
+              <option value="">All Groups</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>City</label>
+            <input
+              type="text"
+              id="searchCity"
+              placeholder="Enter city"
+              onkeyup="searchDonors()"
+            />
+          </div>
+
+          <div class="filter-group">
+            <button class="btn btn-primary" onclick="searchDonors()">
+              Search
+            </button>
+            <button class="btn btn-secondary" onclick="resetSearch()">
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="results" class="results-grid">
+        <!-- Results will be displayed here -->
+      </div>
+
+      <div class="search-section" style="margin-top: 2rem">
+        <h2>🆔 Check Blood Request by ID</h2>
+
+        <div class="search-filters">
+          <div class="filter-group">
+            <label>Request ID</label>
+            <input
+              type="text"
+              id="requestIdSearch"
+              placeholder="Enter request ID e.g. REQ-123456"
+            />
+          </div>
+
+          <div class="filter-group">
+            <button class="btn btn-primary" onclick="searchRequestStatus()">
+              Search ID
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="requestStatusResult" class="results-grid"></div>
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-column">
+          <p><strong>Submitted by:</strong></p>
+          <p><strong class="accent-name">MOHAMMAD ZONAID</strong></p>
+          <p><strong>2 4 1 5 0 8 9 2 0 1 0</strong></p>
+          <p><strong>3rd Semester</strong></p>
+          <p><strong>2023-2024</strong></p>
+          <p><strong>Term 251</strong></p>
+        </div>
+        <div class="footer-column">
+          <p><strong>Supervised by:</strong></p>
+          <p><strong class="accent-name">SANTOSH KUMAR SHUSHIL</strong></p>
+          <p><strong>DEPARTMENT HEAD (CMT)</strong></p>
+        </div>
+      </div>
+      <div class="footer-brand">
+        <div class="brand-mark">
+          <img
+            src="assets/images/diit-logo.png"
+            alt="DIIT Logo"
+            class="diit-logo"
+          />
+        </div>
+        <div class="brand-text">Daffodil Institute of IT, Chattogram</div>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+      // Auto-select blood group from URL parameter
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const bloodGroup = urlParams.get("blood");
+        const requestId = urlParams.get("requestId");
+
+        enforceApprovedRequestAccess();
+
+        if (bloodGroup) {
+          const select = document.getElementById("searchBloodGroup");
+          if (select) {
+            select.value = bloodGroup;
+            searchDonors();
+          }
+        }
+
+        if (requestId) {
+          const requestInput = document.getElementById("requestIdSearch");
+          if (requestInput) {
+            requestInput.value = requestId;
+            searchRequestStatus();
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

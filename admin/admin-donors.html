@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Donors - Admin Panel</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="admin-style.css" />
+  </head>
+  <body>
+    <div class="admin-wrapper">
+      <!-- Sidebar -->
+      <div class="admin-sidebar">
+        <div class="logo">🩸 Blood<span>Connect</span></div>
+        <ul>
+          <li>
+            <a href="admin-dashboard.html"
+              ><span class="icon">📊</span> Dashboard</a
+            >
+          </li>
+          <li class="active">
+            <a href="admin-donors.html"
+              ><span class="icon">👥</span> Manage Donors</a
+            >
+          </li>
+          <li>
+            <a href="admin-requests.html"
+              ><span class="icon">📋</span> Blood Requests</a
+            >
+          </li>
+          <li>
+            <a href="admin-stock.html"
+              ><span class="icon">💉</span> Blood Stock</a
+            >
+          </li>
+          <li>
+            <a href="admin-users.html"><span class="icon">👤</span> Users</a>
+          </li>
+        </ul>
+        <div class="logout-link">
+          <a href="#" onclick="adminLogout()"
+            ><span class="icon">🚪</span> Logout</a
+          >
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="admin-content">
+        <div class="admin-header">
+          <h1>👥 Manage Donors</h1>
+          <div class="admin-info">
+            <span id="adminName">Admin</span>
+            <div class="avatar">A</div>
+          </div>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <div class="admin-card">
+          <h3>All Donors <span class="badge" id="donorCount">0</span></h3>
+
+          <div class="filter-bar">
+            <input
+              type="text"
+              id="searchDonor"
+              placeholder="Search by name, email, city..."
+              onkeyup="filterDonors()"
+            />
+            <select id="filterBloodGroup" onchange="filterDonors()">
+              <option value="">All Blood Groups</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+            <select id="filterStatus" onchange="filterDonors()">
+              <option value="">All Status</option>
+              <option value="approved">Approved</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Blood Group</th>
+                  <th>City</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="donorsTableBody">
+                <tr>
+                  <td colspan="6" style="text-align: center; color: #999">
+                    No donors found
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Donor Modal -->
+    <div class="modal" id="viewDonorModal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('viewDonorModal')"
+          >&times;</span
+        >
+        <h2>👤 Donor Details</h2>
+        <div id="donorDetails"></div>
+      </div>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

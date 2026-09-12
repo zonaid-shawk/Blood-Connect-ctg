@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Users - Admin Panel</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="admin-style.css" />
+  </head>
+  <body>
+    <div class="admin-wrapper">
+      <!-- Sidebar -->
+      <div class="admin-sidebar">
+        <div class="logo">🩸 Blood<span>Connect</span></div>
+        <ul>
+          <li>
+            <a href="admin-dashboard.html"
+              ><span class="icon">📊</span> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="admin-donors.html"
+              ><span class="icon">👥</span> Manage Donors</a
+            >
+          </li>
+          <li>
+            <a href="admin-requests.html"
+              ><span class="icon">📋</span> Blood Requests</a
+            >
+          </li>
+          <li>
+            <a href="admin-stock.html"
+              ><span class="icon">💉</span> Blood Stock</a
+            >
+          </li>
+          <li class="active">
+            <a href="admin-users.html"><span class="icon">👤</span> Users</a>
+          </li>
+        </ul>
+        <div class="logout-link">
+          <a href="#" onclick="adminLogout()"
+            ><span class="icon">🚪</span> Logout</a
+          >
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="admin-content">
+        <div class="admin-header">
+          <h1>👤 Manage Users</h1>
+          <div class="admin-info">
+            <span id="adminName">Admin</span>
+            <div class="avatar">A</div>
+            <a
+              href="../index.html"
+              class="btn btn-sm btn-home"
+              style="
+                background: #2a9d8f;
+                color: white;
+                padding: 0.5rem 1.2rem;
+                border-radius: 8px;
+                text-decoration: none;
+                margin-left: 1rem;
+                font-size: 0.9rem;
+              "
+            >
+              🏠 Home
+            </a>
+          </div>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <div class="admin-card">
+          <h3>
+            All Registered Users <span class="badge" id="userCount">0</span>
+          </h3>
+
+          <div class="filter-bar">
+            <input
+              type="text"
+              id="searchUser"
+              placeholder="Search by name, email, phone..."
+              onkeyup="filterUsers()"
+            />
+            <select id="filterUserStatus" onchange="filterUsers()">
+              <option value="">All Status</option>
+              <option value="approved">Approved</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr>
+                  <td colspan="6" style="text-align: center; color: #999">
+                    No users found
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

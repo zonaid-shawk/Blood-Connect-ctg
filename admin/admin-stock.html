@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blood Stock - Admin Panel</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="admin-style.css" />
+  </head>
+  <body>
+    <div class="admin-wrapper">
+      <!-- Sidebar -->
+      <div class="admin-sidebar">
+        <div class="logo">🩸 Blood<span>Connect</span></div>
+        <ul>
+          <li>
+            <a href="admin-dashboard.html"
+              ><span class="icon">📊</span> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="admin-donors.html"
+              ><span class="icon">👥</span> Manage Donors</a
+            >
+          </li>
+          <li>
+            <a href="admin-requests.html"
+              ><span class="icon">📋</span> Blood Requests</a
+            >
+          </li>
+          <li class="active">
+            <a href="admin-stock.html"
+              ><span class="icon">💉</span> Blood Stock</a
+            >
+          </li>
+          <li>
+            <a href="admin-users.html"><span class="icon">👤</span> Users</a>
+          </li>
+        </ul>
+        <div class="logout-link">
+          <a href="#" onclick="adminLogout()"
+            ><span class="icon">🚪</span> Logout</a
+          >
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="admin-content">
+        <div class="admin-header">
+          <h1>💉 Blood Stock Management</h1>
+          <div class="admin-info">
+            <span id="adminName">Admin</span>
+            <div class="avatar">A</div>
+            <a
+              href="../index.html"
+              class="btn btn-sm btn-home"
+              style="
+                background: #2a9d8f;
+                color: white;
+                padding: 0.5rem 1.2rem;
+                border-radius: 8px;
+                text-decoration: none;
+                margin-left: 1rem;
+                font-size: 0.9rem;
+              "
+            >
+              🏠 Home
+            </a>
+          </div>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <div class="admin-card">
+          <h3>Blood Stock Overview</h3>
+          <div
+            id="stockCards"
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+              gap: 1.5rem;
+              padding: 1rem 0;
+            "
+          >
+            <!-- Stock cards will be rendered here -->
+          </div>
+        </div>
+
+        <div class="admin-card" style="margin-top: 2rem">
+          <h3>Manage Stock</h3>
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Blood Group</th>
+                  <th>Available Units</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="stockTableBody">
+                <!-- Stock table will be rendered here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

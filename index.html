@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BloodConnect - Save Lives</title>
+    <link rel="icon" type="image/png" href="src/photos/fav icon.png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <img src="src/photos/logo.png" alt="BloodConnect Logo" />
+      </div>
+      <ul>
+        <li class="nav-home"><a href="index.html" class="active">Home</a></li>
+        <li class="nav-item"><a href="donor-register.html">Become Donor</a></li>
+        <li class="nav-item"><a href="request-blood.html">Request Blood</a></li>
+        <li class="nav-admin">
+          <a
+            href="admin/admin-login.html"
+            style="background: rgba(255, 255, 255, 0.2)"
+            >🔒 Admin</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-content">
+        <h1>🩸 Donate Blood, Save <span>Lives</span></h1>
+        <p>
+          Every 2 seconds, someone needs blood. Join our community of donors and
+          help save lives today.
+        </p>
+        <div class="cta-buttons">
+          <a href="donor-register.html" class="btn btn-primary"
+            >Become a Donor</a
+          >
+          <a href="request-blood.html" class="btn btn-secondary"
+            >Request Blood</a
+          >
+        </div>
+
+        <div
+          class="home-request-search"
+          style="margin-top: 2rem; max-width: 620px; width: 100%"
+        >
+          <div class="search-inline">
+            <input
+              type="text"
+              id="homeRequestId"
+              placeholder="Enter Request ID (e.g. REQ-123456)"
+              aria-label="Request ID"
+            />
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="goToRequestSearch()"
+            >
+              Search ID
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="stats" id="homeStats">
+        <div class="stat-item">
+          <h3 id="totalDonors">0</h3>
+          <p>Active Donors</p>
+        </div>
+        <div class="stat-item">
+          <h3 id="totalRequests">0</h3>
+          <p>Blood Requests</p>
+        </div>
+        <div class="stat-item">
+          <h3 id="totalDonations">0</h3>
+          <p>Lives Saved</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+    BLOOD GROUPS - Updated with click functionality
+    ============================================ -->
+    <section class="blood-groups">
+      <h2>All <span>Blood Groups</span> Available</h2>
+      <p style="text-align: center; color: #666; margin-bottom: 2rem">
+        👆 Click on any blood group to see available donors and stock
+      </p>
+      <div class="group-grid">
+        <div
+          class="group A"
+          onclick="showBloodGroupDetails('A+')"
+          data-group="A+"
+        >
+          A+
+        </div>
+        <div
+          class="group A"
+          onclick="showBloodGroupDetails('A-')"
+          data-group="A-"
+        >
+          A-
+        </div>
+        <div
+          class="group B"
+          onclick="showBloodGroupDetails('B+')"
+          data-group="B+"
+        >
+          B+
+        </div>
+        <div
+          class="group B"
+          onclick="showBloodGroupDetails('B-')"
+          data-group="B-"
+        >
+          B-
+        </div>
+        <div
+          class="group AB"
+          onclick="showBloodGroupDetails('AB+')"
+          data-group="AB+"
+        >
+          AB+
+        </div>
+        <div
+          class="group AB"
+          onclick="showBloodGroupDetails('AB-')"
+          data-group="AB-"
+        >
+          AB-
+        </div>
+        <div
+          class="group O"
+          onclick="showBloodGroupDetails('O+')"
+          data-group="O+"
+        >
+          O+
+        </div>
+        <div
+          class="group O"
+          onclick="showBloodGroupDetails('O-')"
+          data-group="O-"
+        >
+          O-
+        </div>
+      </div>
+
+      <!-- Blood Group Details Container -->
+      <div
+        id="bloodGroupDetails"
+        style="
+          display: none;
+          margin-top: 2rem;
+          max-width: 800px;
+          margin-left: auto;
+          margin-right: auto;
+        "
+      >
+        <!-- Details will be shown here -->
+      </div>
+    </section>
+
+    <!-- ============================================
+    HOW IT WORKS
+    ============================================ -->
+    <section class="features">
+      <h2>How It <span>Works</span></h2>
+      <p
+        style="
+          text-align: center;
+          color: #666;
+          max-width: 600px;
+          margin: 0 auto 2rem auto;
+        "
+      >
+        Follow these simple steps to donate or request blood
+      </p>
+      <div class="feature-grid">
+        <div
+          class="feature-card"
+          onclick="navigateTo('register')"
+          style="cursor: pointer"
+        >
+          <div class="icon">📝</div>
+          <h3>Register</h3>
+          <p>Create your account as a donor or recipient</p>
+          <span class="click-hint">Click Here →</span>
+        </div>
+
+        <div
+          class="feature-card"
+          onclick="navigateTo('donate')"
+          style="cursor: pointer"
+        >
+          <div class="icon">🩸</div>
+          <h3>Donate</h3>
+          <p>Register as a blood donor and save lives</p>
+          <span class="click-hint">Click Here →</span>
+        </div>
+
+        <div
+          class="feature-card"
+          onclick="navigateTo('search')"
+          style="cursor: pointer"
+        >
+          <div class="icon">🔍</div>
+          <h3>Search</h3>
+          <p>Find donors by blood group and location</p>
+          <span class="click-hint">Click Here →</span>
+        </div>
+
+        <div
+          class="feature-card"
+          onclick="navigateTo('request')"
+          style="cursor: pointer"
+        >
+          <div class="icon">💉</div>
+          <h3>Request</h3>
+          <p>Request blood for patients in need</p>
+          <span class="click-hint">Click Here →</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <h2>Ready to make something for humanity?</h2>
+      <p>Join thousands of donors who are saving lives every day.</p>
+      <div class="cta-buttons">
+        <a
+          href="donor-register.html"
+          class="btn btn-primary"
+          style="background: #e76f51; color: white"
+          >🩸 Become a Donor</a
+        >
+        <a
+          href="request-blood.html"
+          class="btn btn-secondary"
+          style="background: white; color: #335c67"
+          >💉 Request Blood</a
+        >
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-column">
+          <p><strong>Submitted by:</strong></p>
+          <p><strong class="accent-name">MOHAMMAD ZONAID</strong></p>
+          <p><strong>2 4 1 5 0 8 9 2 0 1 0</strong></p>
+          <p><strong>3rd Semester</strong></p>
+          <p><strong>2023-2024</strong></p>
+          <p><strong>Term 251</strong></p>
+        </div>
+        <div class="footer-column">
+          <p><strong>Supervised by:</strong></p>
+          <p><strong class="accent-name">SANTOSH KUMAR SHUSHIL</strong></p>
+          <p><strong>DEPARTMENT HEAD (CMT)</strong></p>
+        </div>
+      </div>
+      <div class="footer-brand">
+        <div class="brand-mark">
+          <img
+            src="assets/images/diit-logo.png"
+            alt="DIIT Logo"
+            class="diit-logo"
+          />
+        </div>
+        <div class="brand-text">Daffodil Institute of IT, Chattogram</div>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

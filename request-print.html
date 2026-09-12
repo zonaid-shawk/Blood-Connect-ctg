@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Print Blood Request - BloodConnect</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <img src="src/photos/logo.png" alt="BloodConnect Logo" />
+      </div>
+      <ul>
+        <li class="nav-home"><a href="index.html">Home</a></li>
+        <li class="nav-item"><a href="donor-register.html">Become Donor</a></li>
+        <li class="nav-item"><a href="request-blood.html">Request Blood</a></li>
+        <li class="nav-admin">
+          <a
+            href="admin/admin-login.html"
+            style="background: rgba(255, 255, 255, 0.2)"
+            >🔒 Admin</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <div class="form-container print-container">
+        <h2>🩸 Blood Request Slip</h2>
+        <p class="subtitle">
+          Print this page and keep the request ID for follow-up
+        </p>
+
+        <div id="printRequestDetails"></div>
+
+        <div class="cta-buttons" style="margin-top: 2rem">
+          <button class="btn btn-primary" onclick="window.print()">
+            🖨️ Print
+          </button>
+          <a href="search-donors.html" class="btn btn-secondary"
+            >🔎 Search by ID</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-column">
+          <p><strong>Submitted by:</strong></p>
+          <p><strong class="accent-name">MOHAMMAD ZONAID</strong></p>
+          <p><strong>2 4 1 5 0 8 9 2 0 1 0</strong></p>
+          <p><strong>3rd Semester</strong></p>
+          <p><strong>2023-2024</strong></p>
+          <p><strong>Term 251</strong></p>
+        </div>
+        <div class="footer-column">
+          <p><strong>Supervised by:</strong></p>
+          <p><strong class="accent-name">SANTOSH KUMAR SHUSHIL</strong></p>
+          <p><strong>DEPARTMENT HEAD (CMT)</strong></p>
+        </div>
+      </div>
+      <div class="footer-brand">
+        <div class="brand-mark">
+          <img
+            src="assets/images/diit-logo.png"
+            alt="DIIT Logo"
+            class="diit-logo"
+          />
+        </div>
+        <div class="brand-text">Daffodil Institute of IT, Chattogram</div>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        const requestId =
+          params.get("requestId") ||
+          localStorage.getItem("latestRequestId") ||
+          (() => {
+            const allRequests = JSON.parse(
+              localStorage.getItem("bloodRequests") || "[]",
+            );
+            return allRequests.length
+              ? allRequests[allRequests.length - 1].requestId
+              : "";
+          })();
+        const details = document.getElementById("printRequestDetails");
+
+        if (!details) return;
+
+        if (!requestId) {
+          details.innerHTML =
+            '<div class="no-results"><p>❌ No request ID found.</p></div>';
+          return;
+        }
+
+        const request = getRequestById(requestId);
+        if (!request) {
+          details.innerHTML =
+            '<div class="no-results"><p>❌ Request not found.</p></div>';
+          return;
+        }
+
+        details.innerHTML = getRequestPrintHtml(request);
+      });
+    </script>
+  </body>
+</html>

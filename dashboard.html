@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - BloodConnect</title>
+    <link rel="icon" type="image/png" href="src/photos/fav icon.png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <img src="src/photos/logo.png" alt="BloodConnect Logo" />
+      </div>
+      <ul>
+        <li class="nav-home"><a href="index.html">Home</a></li>
+        <li class="nav-item"><a href="donor-register.html">Become Donor</a></li>
+        <li class="nav-item"><a href="request-blood.html">Request Blood</a></li>
+        <li class="nav-admin">
+          <a
+            href="admin/admin-login.html"
+            style="background: rgba(255, 255, 255, 0.2)"
+            >🔒 Admin</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <h2>📊 Dashboard</h2>
+
+      <div class="dashboard-stats">
+        <div class="stat-card" data-detail="donors">
+          <div class="number" id="dashDonors">0</div>
+          <div class="label">Total Donors</div>
+        </div>
+        <div class="stat-card" data-detail="requests">
+          <div class="number" id="dashRequests">0</div>
+          <div class="label">Blood Requests</div>
+        </div>
+        <div class="stat-card" data-detail="pending">
+          <div class="number" id="dashPending">0</div>
+          <div class="label">Pending Requests</div>
+        </div>
+        <div class="stat-card" data-detail="available">
+          <div class="number" id="dashAvailable">0</div>
+          <div class="label">Available Donors</div>
+        </div>
+      </div>
+
+      <div id="dashboardDetails" class="dashboard-details"></div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card" data-detail="recentRequests">
+          <h3>📋 Recent Blood Requests</h3>
+          <div id="recentRequests"></div>
+        </div>
+        <div class="dashboard-card" data-detail="stock">
+          <h3>🩸 Blood Stock</h3>
+          <div id="bloodStock"></div>
+        </div>
+      </div>
+
+      <div class="dashboard-card" data-detail="recentDonors">
+        <h3>👥 Recent Donors</h3>
+        <div id="recentDonors"></div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-column">
+          <p><strong>Submitted by:</strong></p>
+          <p><strong class="accent-name">MOHAMMAD ZONAID</strong></p>
+          <p><strong>2 4 1 5 0 8 9 2 0 1 0</strong></p>
+          <p><strong>3rd Semester</strong></p>
+          <p><strong>2023-2024</strong></p>
+          <p><strong>Term 251</strong></p>
+        </div>
+        <div class="footer-column">
+          <p><strong>Supervised by:</strong></p>
+          <p><strong class="accent-name">SANTOSH KUMAR SHUSHIL</strong></p>
+          <p><strong>DEPARTMENT HEAD (CMT)</strong></p>
+        </div>
+      </div>
+      <div class="footer-brand">
+        <div class="brand-mark">
+          <img
+            src="assets/images/diit-logo.png"
+            alt="DIIT Logo"
+            class="diit-logo"
+          />
+        </div>
+        <div class="brand-text">Daffodil Institute of IT, Chattogram</div>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

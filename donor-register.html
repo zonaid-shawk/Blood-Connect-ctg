@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register as Donor - BloodConnect</title>
+    <link rel="icon" type="image/png" href="src/photos/fav icon.png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <img src="src/photos/logo.png" alt="BloodConnect Logo" />
+      </div>
+      <ul>
+        <li class="nav-home"><a href="index.html">Home</a></li>
+        <li class="nav-item"><a href="donor-register.html">Become Donor</a></li>
+        <li class="nav-item"><a href="request-blood.html">Request Blood</a></li>
+        <li class="nav-admin">
+          <a
+            href="admin/admin-login.html"
+            style="background: rgba(255, 255, 255, 0.2)"
+            >🔒 Admin</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <div class="form-container">
+        <h2>🩸 Register as Blood Donor</h2>
+        <p class="subtitle">Your donation can save up to 3 lives</p>
+
+        <div id="message" class="message"></div>
+
+        <form id="donorForm" onsubmit="return registerDonor(event);">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input
+              type="text"
+              id="fullName"
+              required
+              placeholder="Enter your full name"
+              pattern="^[A-Za-z .'-]+$"
+              title="Name can only contain letters, spaces, dots, apostrophes, and hyphens"
+              oninput="this.value = this.value.replace(/[0-9]/g, '')"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Email *</label>
+            <input
+              type="email"
+              id="email"
+              required
+              placeholder="your@email.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input
+              type="tel"
+              id="phone"
+              required
+              placeholder="017XXXXXXXX"
+              inputmode="numeric"
+              pattern="[0-9+()\-\s]{10,15}"
+              title="Phone number must contain only digits and valid phone symbols"
+              oninput="this.value = this.value.replace(/[^0-9+()\-\s]/g, '')"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Blood Group *</label>
+            <select id="bloodGroup" required>
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Age *</label>
+            <input
+              type="number"
+              id="age"
+              min="18"
+              max="65"
+              required
+              placeholder="18-65 years"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Gender *</label>
+            <select id="gender" required>
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>City *</label>
+            <select id="city" required>
+              <option value="">Select City</option>
+              <option value="Chittagong">Chittagong (Chattogram)</option>
+              <option value="Cox's Bazar">Cox's Bazar</option>
+              <option value="Comilla">Comilla (Cumilla)</option>
+              <option value="Feni">Feni</option>
+              <option value="Brahmanbaria">Brahmanbaria</option>
+              <option value="Chandpur">Chandpur</option>
+              <option value="Noakhali">Noakhali</option>
+              <option value="Lakshmipur">Lakshmipur</option>
+              <option value="Rangamati">Rangamati</option>
+              <option value="Khagrachhari">Khagrachhari</option>
+              <option value="Bandarban">Bandarban</option>
+              <option value="Dhaka">Dhaka</option>
+              <option value="Chattogram">Chattogram</option>
+              <option value="Sylhet">Sylhet</option>
+              <option value="Khulna">Khulna</option>
+              <option value="Rajshahi">Rajshahi</option>
+              <option value="Barishal">Barishal</option>
+              <option value="Rangpur">Rangpur</option>
+              <option value="Mymensingh">Mymensingh</option>
+              <option value="Narayanganj">Narayanganj</option>
+              <option value="Cumilla">Cumilla</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Address</label>
+            <textarea
+              id="address"
+              rows="3"
+              placeholder="Your full address"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Last Donation Date</label>
+            <input type="date" id="lastDonation" />
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="isAvailable" checked />
+              I am available for blood donation
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="terms" required />
+              I confirm that I am healthy and eligible to donate blood
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            Register as Donor
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-column">
+          <p><strong>Submitted by:</strong></p>
+          <p><strong class="accent-name">MOHAMMAD ZONAID</strong></p>
+          <p><strong>2 4 1 5 0 8 9 2 0 1 0</strong></p>
+          <p><strong>3rd Semester</strong></p>
+          <p><strong>2023-2024</strong></p>
+          <p><strong>Term 251</strong></p>
+        </div>
+        <div class="footer-column">
+          <p><strong>Supervised by:</strong></p>
+          <p><strong class="accent-name">SANTOSH KUMAR SHUSHIL</strong></p>
+          <p><strong>DEPARTMENT HEAD (CMT)</strong></p>
+        </div>
+      </div>
+      <div class="footer-brand">
+        <div class="brand-mark">
+          <img
+            src="assets/images/diit-logo.png"
+            alt="DIIT Logo"
+            class="diit-logo"
+          />
+        </div>
+        <div class="brand-text">Daffodil Institute of IT, Chattogram</div>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

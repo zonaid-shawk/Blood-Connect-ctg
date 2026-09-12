@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Requests - Admin Panel</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="admin-style.css" />
+  </head>
+  <body>
+    <div class="admin-wrapper">
+      <!-- Sidebar -->
+      <div class="admin-sidebar">
+        <div class="logo">🩸 Blood<span>Connect</span></div>
+        <ul>
+          <li>
+            <a href="admin-dashboard.html"
+              ><span class="icon">📊</span> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="admin-donors.html"
+              ><span class="icon">👥</span> Manage Donors</a
+            >
+          </li>
+          <li class="active">
+            <a href="admin-requests.html"
+              ><span class="icon">📋</span> Blood Requests</a
+            >
+          </li>
+          <li>
+            <a href="admin-stock.html"
+              ><span class="icon">💉</span> Blood Stock</a
+            >
+          </li>
+          <li>
+            <a href="admin-users.html"><span class="icon">👤</span> Users</a>
+          </li>
+        </ul>
+        <div class="logout-link">
+          <a href="#" onclick="adminLogout()"
+            ><span class="icon">🚪</span> Logout</a
+          >
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="admin-content">
+        <div class="admin-header">
+          <h1>📋 Manage Blood Requests</h1>
+          <div class="admin-info">
+            <span id="adminName">Admin</span>
+            <div class="avatar">A</div>
+            <a
+              href="../index.html"
+              class="btn btn-sm btn-home"
+              style="
+                background: #2a9d8f;
+                color: white;
+                padding: 0.5rem 1.2rem;
+                border-radius: 8px;
+                text-decoration: none;
+                margin-left: 1rem;
+                font-size: 0.9rem;
+              "
+            >
+              🏠 Home
+            </a>
+          </div>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <div class="admin-card">
+          <h3>
+            All Blood Requests <span class="badge" id="requestCount">0</span>
+          </h3>
+
+          <div class="filter-bar">
+            <input
+              type="text"
+              id="searchRequest"
+              placeholder="Search by patient, hospital..."
+              onkeyup="filterRequests()"
+            />
+            <select id="filterRequestBloodGroup" onchange="filterRequests()">
+              <option value="">All Blood Groups</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+            <select id="filterRequestStatus" onchange="filterRequests()">
+              <option value="">All Status</option>
+              <option value="Pending">Pending</option>
+              <option value="Fulfilled">Fulfilled</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Patient</th>
+                  <th>Blood Group</th>
+                  <th>Hospital</th>
+                  <th>Urgency</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="requestsTableBody">
+                <tr>
+                  <td colspan="7" style="text-align: center; color: #999">
+                    No blood requests found
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Request Modal -->
+    <div class="modal" id="viewRequestModal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('viewRequestModal')"
+          >&times;</span
+        >
+        <h2>📋 Request Details</h2>
+        <div id="requestDetails"></div>
+      </div>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

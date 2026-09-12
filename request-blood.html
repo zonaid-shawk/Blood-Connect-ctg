@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Request Blood - BloodConnect</title>
+    <link rel="icon" type="image/png" href="src/photos/fav icon.png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <img src="src/photos/logo.png" alt="BloodConnect Logo" />
+      </div>
+      <ul>
+        <li class="nav-home"><a href="index.html">Home</a></li>
+        <li class="nav-item"><a href="donor-register.html">Become Donor</a></li>
+        <li class="nav-item"><a href="request-blood.html">Request Blood</a></li>
+        <li class="nav-admin">
+          <a
+            href="admin/admin-login.html"
+            style="background: rgba(255, 255, 255, 0.2)"
+            >🔒 Admin</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <div class="form-container">
+        <h2>💉 Request Blood</h2>
+        <p class="subtitle">We'll help you find donors quickly</p>
+
+        <div id="message" class="message"></div>
+
+        <form id="requestForm" onsubmit="return submitBloodRequest(event);">
+          <div class="form-group">
+            <label>Patient Name *</label>
+            <input
+              type="text"
+              id="patientName"
+              required
+              placeholder="Patient's full name"
+              pattern="^[A-Za-z .'-]+$"
+              title="Name can only contain letters, spaces, dots, apostrophes, and hyphens"
+              oninput="this.value = this.value.replace(/[0-9]/g, '')"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Required Blood Group *</label>
+            <select id="bloodGroup" required>
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Hospital Name *</label>
+            <select id="hospital" required>
+              <option value="">Select Hospital</option>
+              <option value="Evercare Hospital Chattogram">
+                Evercare Hospital Chattogram
+              </option>
+              <option value="Apollo Imperial Hospitals">
+                Apollo Imperial Hospitals
+              </option>
+              <option value="Parkview Hospital Limited">
+                Parkview Hospital Limited
+              </option>
+              <option value="Chittagong Metropolitan Hospital Limited">
+                Chittagong Metropolitan Hospital Limited
+              </option>
+              <option value="Max Hospital & Diagnostic Limited">
+                Max Hospital & Diagnostic Limited
+              </option>
+              <option value="National Hospital Chittagong & Sigma Lab Limited">
+                National Hospital Chittagong & Sigma Lab Limited
+              </option>
+              <option value="Chittagong Medical College Hospital (CMCH)">
+                Chittagong Medical College Hospital (CMCH)
+              </option>
+              <option value="CSCR Hospital">CSCR Hospital</option>
+              <option value="Ibn Sina Diagnostic & Consultation Center">
+                Ibn Sina Diagnostic & Consultation Center
+              </option>
+              <option value="Chittagong Maa-O-Shishu Hospital">
+                Chittagong Maa-O-Shishu Hospital
+              </option>
+              <option value="Delta Health Care">Delta Health Care</option>
+              <option value="Epic Health Care">Epic Health Care</option>
+              <option value="Surgiscope Hospital">Surgiscope Hospital</option>
+              <option value="Chittagong Eye Infirmary and Training Hospital">
+                Chittagong Eye Infirmary and Training Hospital
+              </option>
+              <option value="Chittagong Diabetic General Hospital">
+                Chittagong Diabetic General Hospital
+              </option>
+              <option value="Chittagong General Hospital">
+                Chittagong General Hospital
+              </option>
+              <option
+                value="Chattagram International Medical College and Hospital"
+              >
+                Chattagram International Medical College and Hospital
+              </option>
+              <option value="Bangabandhu Memorial Hospital (BBMH)">
+                Bangabandhu Memorial Hospital (BBMH)
+              </option>
+              <option value="Royal Hospital Chattogram">
+                Royal Hospital Chattogram
+              </option>
+              <option value="Labaid Specialized Hospital – Chittagong">
+                Labaid Specialized Hospital – Chittagong
+              </option>
+              <option value="Other Hospital">Other Hospital</option>
+            </select>
+            <input
+              type="text"
+              id="hospitalCustom"
+              placeholder="Type hospital name if not listed"
+              style="margin-top: 0.75rem; display: none"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>City *</label>
+            <select id="city" required>
+              <option value="">Select City</option>
+              <option value="Chittagong">Chittagong (Chattogram)</option>
+              <option value="Cox's Bazar">Cox's Bazar</option>
+              <option value="Comilla">Comilla (Cumilla)</option>
+              <option value="Feni">Feni</option>
+              <option value="Brahmanbaria">Brahmanbaria</option>
+              <option value="Chandpur">Chandpur</option>
+              <option value="Noakhali">Noakhali</option>
+              <option value="Lakshmipur">Lakshmipur</option>
+              <option value="Rangamati">Rangamati</option>
+              <option value="Khagrachhari">Khagrachhari</option>
+              <option value="Bandarban">Bandarban</option>
+              <option value="Dhaka">Dhaka</option>
+              <option value="Chattogram">Chattogram</option>
+              <option value="Sylhet">Sylhet</option>
+              <option value="Khulna">Khulna</option>
+              <option value="Rajshahi">Rajshahi</option>
+              <option value="Barishal">Barishal</option>
+              <option value="Rangpur">Rangpur</option>
+              <option value="Mymensingh">Mymensingh</option>
+              <option value="Narayanganj">Narayanganj</option>
+              <option value="Cumilla">Cumilla</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Contact Number *</label>
+            <input
+              type="tel"
+              id="contact"
+              required
+              placeholder="017XXXXXXXX"
+              inputmode="numeric"
+              pattern="[0-9+()\-\s]{10,15}"
+              title="Phone number must contain only digits and valid phone symbols"
+              oninput="this.value = this.value.replace(/[^0-9+()\-\s]/g, '')"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Urgency Level *</label>
+            <select id="urgency" required>
+              <option value="">Select Urgency</option>
+              <option value="Critical">🔴 Critical (Within 24 hours)</option>
+              <option value="Urgent">🟡 Urgent (Within 48 hours)</option>
+              <option value="Normal">🟢 Normal (Within 1 week)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Units Required</label>
+            <input type="number" id="units" min="1" max="10" value="1" />
+          </div>
+
+          <div class="form-group">
+            <label>Additional Notes</label>
+            <textarea
+              id="notes"
+              rows="3"
+              placeholder="Any special requirements..."
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            Submit Request
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-column">
+          <p><strong>Submitted by:</strong></p>
+          <p><strong class="accent-name">MOHAMMAD ZONAID</strong></p>
+          <p><strong>2 4 1 5 0 8 9 2 0 1 0</strong></p>
+          <p><strong>3rd Semester</strong></p>
+          <p><strong>2023-2024</strong></p>
+          <p><strong>Term 251</strong></p>
+        </div>
+        <div class="footer-column">
+          <p><strong>Supervised by:</strong></p>
+          <p><strong class="accent-name">SANTOSH KUMAR SHUSHIL</strong></p>
+          <p><strong>DEPARTMENT HEAD (CMT)</strong></p>
+        </div>
+      </div>
+      <div class="footer-brand">
+        <div class="brand-mark">
+          <img
+            src="assets/images/diit-logo.png"
+            alt="DIIT Logo"
+            class="diit-logo"
+          />
+        </div>
+        <div class="brand-text">Daffodil Institute of IT, Chattogram</div>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

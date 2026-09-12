@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - BloodConnect</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="admin-style.css" />
+  </head>
+  <body>
+    <div class="admin-wrapper">
+      <!-- Sidebar -->
+      <div class="admin-sidebar">
+        <div class="logo">🩸 Blood<span>Connect</span></div>
+        <ul>
+          <li class="active">
+            <a href="admin-dashboard.html"
+              ><span class="icon">📊</span> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="admin-donors.html"
+              ><span class="icon">👥</span> Manage Donors</a
+            >
+          </li>
+          <li>
+            <a href="admin-requests.html"
+              ><span class="icon">📋</span> Blood Requests</a
+            >
+          </li>
+          <li>
+            <a href="admin-stock.html"
+              ><span class="icon">💉</span> Blood Stock</a
+            >
+          </li>
+          <li>
+            <a href="admin-users.html"><span class="icon">👤</span> Users</a>
+          </li>
+        </ul>
+        <div class="logout-link">
+          <a href="#" onclick="adminLogout()"
+            ><span class="icon">🚪</span> Logout</a
+          >
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="admin-content">
+        <div class="admin-header">
+          <h1>📊 Dashboard</h1>
+          <div class="admin-info">
+            <span id="adminName">Admin</span>
+            <div class="avatar">A</div>
+            <!-- 👇 হোম পেজে যাওয়ার বাটন -->
+            <a
+              href="../index.html"
+              class="btn btn-sm btn-home"
+              style="
+                background: #2a9d8f;
+                color: white;
+                padding: 0.5rem 1.2rem;
+                border-radius: 8px;
+                text-decoration: none;
+                margin-left: 1rem;
+                font-size: 0.9rem;
+              "
+            >
+              🏠 Home
+            </a>
+          </div>
+        </div>
+
+        <!-- বাকি কন্টেন্ট আগের মতই থাকবে -->
+        <div class="admin-stats">
+          <div class="admin-stat-card stat-red" data-detail="donors">
+            <span class="stat-icon">🩸</span>
+            <div class="number" id="statDonors">0</div>
+            <div class="label">Total Donors</div>
+          </div>
+          <div class="admin-stat-card stat-blue" data-detail="requests">
+            <span class="stat-icon">📋</span>
+            <div class="number" id="statRequests">0</div>
+            <div class="label">Blood Requests</div>
+          </div>
+          <div class="admin-stat-card stat-orange" data-detail="pending">
+            <span class="stat-icon">⏳</span>
+            <div class="number" id="statPending">0</div>
+            <div class="label">Pending Requests</div>
+          </div>
+          <div class="admin-stat-card stat-green" data-detail="available">
+            <span class="stat-icon">✅</span>
+            <div class="number" id="statAvailable">0</div>
+            <div class="label">Available Donors</div>
+          </div>
+        </div>
+
+        <div id="dashboardDetails" class="dashboard-details"></div>
+
+        <div class="admin-grid">
+          <div class="admin-card">
+            <h3>
+              👥 Pending Donor Registrations
+              <span class="badge">Pending Approval</span>
+            </h3>
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Blood Group</th>
+                    <th>City</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="pendingDonorsBody">
+                  <tr>
+                    <td colspan="5" style="text-align: center; color: #999">
+                      No pending registrations
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <h3>📋 Recent Blood Requests</h3>
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Patient</th>
+                    <th>Blood Group</th>
+                    <th>Urgency</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recentRequestsBody">
+                  <tr>
+                    <td colspan="4" style="text-align: center; color: #999">
+                      No requests
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card" style="margin-top: 2rem">
+          <h3>💉 Blood Stock Summary</h3>
+          <div
+            id="adminStockSummary"
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+              gap: 1rem;
+              padding: 0.5rem 0;
+            "
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

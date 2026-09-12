@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login - BloodConnect</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="admin-style.css" />
+    <style>
+      .admin-login-container {
+        max-width: 400px;
+        margin: 100px auto;
+        background: white;
+        padding: 2.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      }
+      .admin-login-container .logo {
+        text-align: center;
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+      }
+      .admin-login-container h2 {
+        text-align: center;
+        color: #c41e3a;
+        margin-bottom: 0.5rem;
+      }
+      .admin-login-container .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 2rem;
+      }
+      .admin-badge {
+        display: inline-block;
+        background: #c41e3a;
+        color: white;
+        padding: 0.2rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+      .form-group input:focus {
+        outline: none;
+        border-color: #c41e3a;
+      }
+      .password-toggle-wrap {
+        position: relative;
+      }
+      .password-toggle-wrap input {
+        padding-right: 3rem;
+      }
+      .password-toggle {
+        position: absolute;
+        right: 0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #666;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+      .password-hint {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        color: #555;
+        font-size: 0.9rem;
+      }
+      .btn {
+        padding: 0.8rem 2.5rem;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+        font-weight: 600;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      }
+      .btn-primary {
+        background: #ffd700;
+        color: #333;
+      }
+      .btn-primary:hover {
+        background: #ffed4a;
+      }
+      .btn-block {
+        width: 100%;
+        display: block;
+      }
+      .message {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: none;
+      }
+      .message.success {
+        display: block;
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .message.error {
+        display: block;
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="admin-login-container">
+      <div class="logo">🩸</div>
+      <h2>Admin Panel</h2>
+      <p class="subtitle"><span class="admin-badge">🔒 Secure Access</span></p>
+
+      <div id="message" class="message"></div>
+
+      <form id="adminLoginForm" onsubmit="return adminLogin(event);">
+        <div class="form-group">
+          <label>Username</label>
+          <input
+            type="text"
+            id="adminUsername"
+            placeholder="Enter username"
+            required
+            value="admin"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-toggle-wrap">
+            <input
+              type="password"
+              id="adminPassword"
+              placeholder="Enter password"
+              required
+              value="admin123"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              aria-label="Show password"
+              onclick="togglePasswordVisibility()"
+            >
+              Show
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">
+          Login to Admin Panel
+        </button>
+      </form>
+
+      <p
+        style="
+          text-align: center;
+          margin-top: 1.5rem;
+          color: #999;
+          font-size: 0.9rem;
+        "
+      >
+        Default: username: <strong>admin</strong> | password:
+        <strong>admin12345</strong>
+      </p>
+
+      <p style="text-align: center; margin-top: 0.5rem">
+        <a href="../index.html">← Back to Home</a>
+      </p>
+    </div>
+
+    <script>
+      // Admin credentials
+      const ADMIN_CREDENTIALS = {
+        username: "admin",
+        password: "admin12345",
+      };
+
+      function adminLogin(event) {
+        event.preventDefault();
+
+        const username = document.getElementById("adminUsername").value.trim();
+        const password = document.getElementById("adminPassword").value.trim();
+
+        if (
+          username === ADMIN_CREDENTIALS.username &&
+          password === ADMIN_CREDENTIALS.password
+        ) {
+          localStorage.setItem("adminLoggedIn", "true");
+          localStorage.setItem("adminName", "Admin");
+          window.location.href = "admin-dashboard.html";
+        } else {
+          showMessage("❌ Invalid username or password!", "error");
+        }
+
+        return false;
+      }
+
+      function togglePasswordVisibility() {
+        const passwordInput = document.getElementById("adminPassword");
+        const toggleButton = document.querySelector(".password-toggle");
+
+        if (!passwordInput || !toggleButton) return;
+
+        const isHidden = passwordInput.type === "password";
+        passwordInput.type = isHidden ? "text" : "password";
+        toggleButton.textContent = isHidden ? "Hide" : "Show";
+        toggleButton.setAttribute(
+          "aria-label",
+          isHidden ? "Hide password" : "Show password",
+        );
+      }
+
+      function showMessage(text, type) {
+        const msgDiv = document.getElementById("message");
+        msgDiv.textContent = text;
+        msgDiv.className = `message ${type}`;
+        msgDiv.style.display = "block";
+
+        setTimeout(() => {
+          msgDiv.style.display = "none";
+        }, 5000);
+      }
+    </script>
+  </body>
+</html>
