@@ -44,6 +44,51 @@ function saveBloodStock(stock) {
   localStorage.setItem("bloodStock", JSON.stringify(stock));
 }
 
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
+}
+
+function sendMailToAddress(email, subject, body) {
+  if (!email || !validateEmail(email)) return false;
+
+  const mailtoLink = document.createElement("a");
+  mailtoLink.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  mailtoLink.style.display = "none";
+  document.body.appendChild(mailtoLink);
+  mailtoLink.click();
+  mailtoLink.remove();
+
+  return true;
+}
+
+function getDonorPrintPageUrl(donorId) {
+  const isAdminPage = window.location.href.includes("/admin/");
+  const printPagePath = isAdminPage
+    ? "../donor-print.html"
+    : "donor-print.html";
+  return new URL(
+    `${printPagePath}?donorId=${encodeURIComponent(donorId)}`,
+    window.location.href,
+  ).toString();
+}
+
+function sendDonorApprovalEmail(donor) {
+  if (!donor || !donor.email || !validateEmail(donor.email)) return false;
+
+  const printUrl = getDonorPrintPageUrl(donor.id);
+  const subject = "Your donor registration has been approved";
+  const body =
+    `Hello ${donor.fullName},\n\n` +
+    "Congratulations! Your donor registration has been approved.\n\n" +
+    `Donor ID: ${donor.donorId || donor.id}\n` +
+    `Blood Group: ${donor.bloodGroup}\n\n` +
+    "You can print your donor registration slip here:\n" +
+    `${printUrl}\n\n` +
+    "Thank you for being a lifesaving donor.";
+
+  return sendMailToAddress(donor.email, subject, body);
+}
+
 function openSinglePrintWindow(title, content) {
   const printWindow = window.open("", "_blank", "width=900,height=900");
   if (!printWindow) return;
@@ -190,6 +235,7 @@ function renderRequestPrintHtml(request) {
       <h2>Blood Request Slip</h2>
       <div class="request-detail-item"><strong>Request ID:</strong> ${request.requestId}</div>
       <div class="request-detail-item"><strong>Patient Name:</strong> ${request.patientName}</div>
+      <div class="request-detail-item"><strong>Email:</strong> ${request.email || "N/A"}</div>
       <div class="request-detail-item"><strong>Blood Group:</strong> ${request.bloodGroup}</div>
       <div class="request-detail-item"><strong>Hospital:</strong> ${request.hospital}</div>
       <div class="request-detail-item"><strong>City:</strong> ${request.city}</div>
@@ -239,6 +285,14 @@ function registerDonor(event) {
     !donor.city
   ) {
     showMessage("Please fill in all required fields!", "error");
+    return false;
+  }
+
+  if (!validateEmail(donor.email)) {
+    showMessage(
+      "Please enter a valid email address for donor registration.",
+      "error",
+    );
     return false;
   }
 
@@ -310,6 +364,7 @@ function submitBloodRequest(event) {
     id: Date.now(),
     requestId: "REQ-" + Date.now().toString().slice(-6),
     patientName: document.getElementById("patientName").value.trim(),
+    email: document.getElementById("requesterEmail").value.trim(),
     bloodGroup: document.getElementById("bloodGroup").value,
     hospital: hospitalValue,
     city: document.getElementById("city").value.trim(),
@@ -324,12 +379,21 @@ function submitBloodRequest(event) {
   // Validation
   if (
     !request.patientName ||
+    !request.email ||
     !request.bloodGroup ||
     !request.hospital ||
     !request.city ||
     !request.contact
   ) {
     showMessage("Please fill in all required fields!", "error");
+    return false;
+  }
+
+  if (!validateEmail(request.email)) {
+    showMessage(
+      "Please enter a valid email address for the blood request.",
+      "error",
+    );
     return false;
   }
 
@@ -357,11 +421,20 @@ function submitBloodRequest(event) {
   // Store the last submitted request id for the print page.
   localStorage.setItem("latestRequestId", request.requestId);
 
+  const requestConfirmationSent = sendMailToAddress(
+    request.email,
+    "Blood request submitted successfully",
+    `Hello,\n\nYour blood request has been submitted successfully.\n\nRequest ID: ${request.requestId}\nBlood Group: ${request.bloodGroup}\nHospital: ${request.hospital}\nCity: ${request.city}\n\nPlease keep this ID for follow-up.`,
+  );
+
   // Show success and print popup.
   showMessage(
     "✅ Blood request submitted successfully! Your request ID is " +
       request.requestId +
-      ".",
+      "." +
+      (requestConfirmationSent
+        ? " A confirmation email has been prepared."
+        : ""),
     "success",
   );
   document.getElementById("requestForm").reset();
@@ -384,6 +457,15 @@ function goToRequestSearch() {
 
   window.location.href =
     "search-donors.html?requestId=" + encodeURIComponent(value);
+}
+
+function getDonorById(donorId) {
+  const donors = getDonors();
+  return donors.find(
+    (d) =>
+      String(d.id) === String(donorId) ||
+      (d.donorId || "").toLowerCase() === String(donorId).trim().toLowerCase(),
+  );
 }
 
 function getRequestById(requestId) {
@@ -949,6 +1031,7 @@ function approveDonor(donorId) {
     donors[index].status = "approved";
     donors[index].isAvailable = true;
     saveDonors(donors);
+    sendDonorApprovalEmail(donors[index]);
     return true;
   }
   return false;

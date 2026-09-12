@@ -267,7 +267,10 @@ function handleApproveDonor(donorId) {
   if (!confirm("Approve this donor registration?")) return;
 
   if (approveDonor(donorId)) {
-    showAdminMessage("✅ Donor approved successfully!", "success");
+    showAdminMessage(
+      "✅ Donor approved successfully! The approval email has been prepared.",
+      "success",
+    );
     // Reload current page
     if (document.getElementById("donorsTableBody")) {
       loadDonorsTable();
