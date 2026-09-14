@@ -12,8 +12,22 @@ app.use(express.static(__dirname));
 
 let cachedTransporter = null;
 
+function hasSmtpConfig() {
+  const host = String(process.env.SMTP_HOST || "").trim();
+  const user = String(process.env.SMTP_USER || "").trim();
+  const pass = String(process.env.SMTP_PASS || "").trim();
+
+  return Boolean(
+    host &&
+    user &&
+    pass &&
+    !host.includes("your-email") &&
+    !user.includes("your-email"),
+  );
+}
+
 async function getTransporter() {
-  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+  if (hasSmtpConfig()) {
     return nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT || 587),
@@ -42,6 +56,12 @@ async function getTransporter() {
 }
 
 async function sendEmail({ to, subject, text, html }) {
+  if (!hasSmtpConfig()) {
+    const message =
+      "SMTP is not configured for real email delivery. Set SMTP_HOST, SMTP_USER, SMTP_PASS in .env using a Gmail App Password.";
+    throw new Error(message);
+  }
+
   const transporter = await getTransporter();
 
   const mailOptions = {
@@ -64,7 +84,43 @@ async function sendEmail({ to, subject, text, html }) {
 }
 
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok" });
+  res.json({ status: "ok", smtpConfigured: hasSmtpConfig() });
+});
+
+app.get("/api/email-status", (req, res) => {
+  res.json({
+    smtpConfigured: hasSmtpConfig(),
+    message: hasSmtpConfig()
+      ? "Real SMTP is configured."
+      : "SMTP is not configured. Add SMTP_HOST, SMTP_USER, SMTP_PASS in .env.",
+  });
+});
+
+app.post("/api/test-email", async (req, res) => {
+  const { recipientEmail } = req.body || {};
+
+  if (!recipientEmail) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing recipientEmail in request body.",
+    });
+  }
+
+  try {
+    const result = await sendEmail({
+      to: recipientEmail,
+      subject: "BloodConnect SMTP Test",
+      text: "This is a test email from the BloodConnect app.",
+      html: "<p>This is a test email from the BloodConnect app.</p>",
+    });
+
+    return res.json({ success: true, ...result });
+  } catch (error) {
+    const message =
+      error && error.message ? error.message : "SMTP test failed.";
+    console.error("SMTP test email failed:", error);
+    return res.status(500).json({ success: false, message });
+  }
 });
 
 app.post("/api/send-donor-approval", async (req, res) => {
@@ -101,10 +157,11 @@ app.post("/api/send-donor-approval", async (req, res) => {
 
     return res.json({ success: true, ...result });
   } catch (error) {
+    const message =
+      error && error.message ? error.message : "Failed to send email.";
+
     console.error("Donor approval email failed:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to send email" });
+    return res.status(500).json({ success: false, message });
   }
 });
 
@@ -153,10 +210,11 @@ app.post("/api/send-blood-request", async (req, res) => {
 
     return res.json({ success: true, ...result });
   } catch (error) {
+    const message =
+      error && error.message ? error.message : "Failed to send email.";
+
     console.error("Blood request email failed:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to send email" });
+    return res.status(500).json({ success: false, message });
   }
 });
 
@@ -166,7 +224,11 @@ app.get("/", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`BloodConnect server running on http://localhost:${PORT}`);
-  console.log(
-    "Using Ethereal test SMTP by default; set SMTP_HOST/SMTP_USER/SMTP_PASS for real delivery.",
-  );
+  if (hasSmtpConfig()) {
+    console.log("Real SMTP is configured for production email delivery.");
+  } else {
+    console.log(
+      "SMTP not configured. Set SMTP_HOST, SMTP_USER, SMTP_PASS in .env for real delivery.",
+    );
+  }
 });

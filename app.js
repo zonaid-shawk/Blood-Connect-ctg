@@ -2,27 +2,249 @@
 // DATA STORAGE FUNCTIONS
 // ============================================
 
-// Get all donors from localStorage
-function getDonors() {
-  return JSON.parse(localStorage.getItem("bloodDonors") || "[]");
+const SUPABASE_TABLES = {
+  donors: "blood_donors",
+  requests: "blood_requests",
+  stock: "blood_stock",
+};
+
+function getSupabaseConfig() {
+  const config = window.__SUPABASE_CONFIG__ || {};
+  const url = String(config.url || window.SUPABASE_URL || "").trim();
+  const key = String(config.key || window.SUPABASE_ANON_KEY || "").trim();
+  return { url, key };
 }
 
-// Save donors to localStorage
+function hasSupabaseConfig() {
+  const { url, key } = getSupabaseConfig();
+  return Boolean(url && key && !url.includes("YOUR_PROJECT_REF"));
+}
+
+function ensureSupabaseClient() {
+  if (!hasSupabaseConfig()) return null;
+
+  if (window.supabaseClient) return window.supabaseClient;
+
+  if (window.supabase && typeof window.supabase.createClient === "function") {
+    window.supabaseClient = window.supabase.createClient(
+      getSupabaseConfig().url,
+      getSupabaseConfig().key,
+    );
+    return window.supabaseClient;
+  }
+
+  if (!document.querySelector('script[data-supabase-sdk="true"]')) {
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+    script.async = true;
+    script.dataset.supabaseSdk = "true";
+    script.onload = () => {
+      const client = window.supabase;
+      if (client && typeof client.createClient === "function") {
+        window.supabaseClient = client.createClient(
+          getSupabaseConfig().url,
+          getSupabaseConfig().key,
+        );
+      }
+    };
+    document.head.appendChild(script);
+  }
+
+  return null;
+}
+
+function mapDonorToSupabase(donor) {
+  return {
+    id: donor.id ?? donor.donorId ?? Date.now(),
+    donor_id: donor.donorId || donor.id || null,
+    full_name: donor.fullName || donor.full_name || "",
+    email: donor.email || "",
+    phone: donor.phone || "",
+    blood_group: donor.bloodGroup || donor.blood_group || "",
+    age: Number(donor.age || 0),
+    gender: donor.gender || "",
+    city: donor.city || "",
+    address: donor.address || "",
+    last_donation: donor.lastDonation || donor.last_donation || null,
+    is_available: Boolean(donor.isAvailable ?? true),
+    status: donor.status || "pending",
+    registered_at: donor.registeredAt || new Date().toISOString(),
+    total_donations: Number(donor.totalDonations || donor.total_donations || 0),
+  };
+}
+
+function mapSupabaseDonor(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    donorId: row.donor_id || row.donorId || row.id,
+    fullName: row.full_name || row.fullName || "",
+    email: row.email || "",
+    phone: row.phone || "",
+    bloodGroup: row.blood_group || row.bloodGroup || "",
+    age: Number(row.age || 0),
+    gender: row.gender || "",
+    city: row.city || "",
+    address: row.address || "",
+    lastDonation: row.last_donation || row.lastDonation || null,
+    isAvailable: row.is_available ?? row.isAvailable ?? true,
+    status: row.status || "pending",
+    registeredAt:
+      row.registered_at || row.registeredAt || new Date().toISOString(),
+    totalDonations: Number(row.total_donations || row.totalDonations || 0),
+  };
+}
+
+function mapRequestToSupabase(request) {
+  return {
+    id: request.id ?? request.requestId ?? Date.now(),
+    request_id: request.requestId || request.request_id || null,
+    patient_name: request.patientName || request.patient_name || "",
+    email: request.email || "",
+    blood_group: request.bloodGroup || request.blood_group || "",
+    hospital: request.hospital || "",
+    city: request.city || "",
+    contact: request.contact || "",
+    urgency: request.urgency || "",
+    units: Number(request.units || 1),
+    notes: request.notes || "",
+    status: request.status || "Pending",
+    date: request.date || new Date().toISOString(),
+  };
+}
+
+function mapSupabaseRequest(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    requestId: row.request_id || row.requestId || row.id,
+    patientName: row.patient_name || row.patientName || "",
+    email: row.email || "",
+    bloodGroup: row.blood_group || row.bloodGroup || "",
+    hospital: row.hospital || "",
+    city: row.city || "",
+    contact: row.contact || "",
+    urgency: row.urgency || "",
+    units: Number(row.units || 1),
+    notes: row.notes || "",
+    status: row.status || "Pending",
+    date: row.date || new Date().toISOString(),
+  };
+}
+
+function mapStockToSupabase(stock) {
+  return Object.entries(stock || {}).map(([group, units]) => ({
+    id: group,
+    blood_group: group,
+    units: Number(units || 0),
+  }));
+}
+
+function mapSupabaseStock(rows) {
+  const result = {};
+  (rows || []).forEach((row) => {
+    const group = row.blood_group || row.id;
+    result[group] = Number(row.units || 0);
+  });
+  return result;
+}
+
+function syncSupabaseTable(tableName, rows) {
+  const client = ensureSupabaseClient();
+  if (!client || !Array.isArray(rows)) return;
+
+  client
+    .from(tableName)
+    .upsert(rows, { onConflict: "id" })
+    .then(() => {})
+    .catch((error) => {
+      console.warn(`Supabase sync failed for ${tableName}:`, error);
+    });
+}
+
+function hydrateSupabaseTable(tableName, localStorageKey, mapper) {
+  const client = ensureSupabaseClient();
+  if (!client) return;
+
+  client
+    .from(tableName)
+    .select("*")
+    .then(({ data, error }) => {
+      if (error) {
+        console.warn(`Supabase read failed for ${tableName}:`, error);
+        return;
+      }
+
+      if (!Array.isArray(data)) {
+        return;
+      }
+
+      const mapped = mapper ? data.map(mapper).filter(Boolean) : data;
+      localStorage.setItem(localStorageKey, JSON.stringify(mapped));
+    })
+    .catch((error) => {
+      console.warn(`Supabase hydrate failed for ${tableName}:`, error);
+    });
+}
+
+function getDonors() {
+  const stored = localStorage.getItem("bloodDonors");
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (error) {
+      localStorage.removeItem("bloodDonors");
+    }
+  }
+
+  if (hasSupabaseConfig()) {
+    hydrateSupabaseTable(
+      SUPABASE_TABLES.donors,
+      "bloodDonors",
+      mapSupabaseDonor,
+    );
+  }
+
+  return [];
+}
+
 function saveDonors(donors) {
   localStorage.setItem("bloodDonors", JSON.stringify(donors));
+  const supabaseRows = Array.isArray(donors)
+    ? donors.map(mapDonorToSupabase)
+    : [];
+  syncSupabaseTable(SUPABASE_TABLES.donors, supabaseRows);
 }
 
-// Get all blood requests
 function getRequests() {
-  return JSON.parse(localStorage.getItem("bloodRequests") || "[]");
+  const stored = localStorage.getItem("bloodRequests");
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (error) {
+      localStorage.removeItem("bloodRequests");
+    }
+  }
+
+  if (hasSupabaseConfig()) {
+    hydrateSupabaseTable(
+      SUPABASE_TABLES.requests,
+      "bloodRequests",
+      mapSupabaseRequest,
+    );
+  }
+
+  return [];
 }
 
-// Save blood requests
 function saveRequests(requests) {
   localStorage.setItem("bloodRequests", JSON.stringify(requests));
+  const supabaseRows = Array.isArray(requests)
+    ? requests.map(mapRequestToSupabase)
+    : [];
+  syncSupabaseTable(SUPABASE_TABLES.requests, supabaseRows);
 }
 
-// Get blood stock
 function getBloodStock() {
   const defaultStock = {
     "A+": 10,
@@ -34,14 +256,29 @@ function getBloodStock() {
     "O+": 15,
     "O-": 7,
   };
-  return JSON.parse(
-    localStorage.getItem("bloodStock") || JSON.stringify(defaultStock),
-  );
+
+  const stored = localStorage.getItem("bloodStock");
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (error) {
+      localStorage.removeItem("bloodStock");
+    }
+  }
+
+  if (hasSupabaseConfig()) {
+    hydrateSupabaseTable(SUPABASE_TABLES.stock, "bloodStock", (rows) =>
+      mapSupabaseStock(Array.isArray(rows) ? rows : []),
+    );
+  }
+
+  return defaultStock;
 }
 
-// Save blood stock
 function saveBloodStock(stock) {
   localStorage.setItem("bloodStock", JSON.stringify(stock));
+  const rows = mapStockToSupabase(stock);
+  syncSupabaseTable(SUPABASE_TABLES.stock, rows);
 }
 
 function validateEmail(email) {
